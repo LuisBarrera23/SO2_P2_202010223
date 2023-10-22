@@ -123,10 +123,8 @@ func borrarArchivo() {
 
 func procesoNumero(tipo int, proceso int) {
 	if tipo == 1 {
-		// Genera un número aleatorio entre 1 y 999
 		numeroAleatorio := rand.Intn(999) + 1
 
-		// Abre el archivo en modo de escritura y agrega la línea
 		file, err := os.OpenFile("paginacion.txt", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
 			fmt.Println("Error al abrir el archivo", err)
@@ -140,7 +138,6 @@ func procesoNumero(tipo int, proceso int) {
 		}
 		fmt.Printf("Proceso %d escribiendo numero: %d\n", proceso, numeroAleatorio)
 	} else if tipo == 0 {
-		// Leer el archivo y guardar los números en un arreglo
 		numeros := []int{}
 		archivo, err := os.Open("paginacion.txt")
 		if err != nil {
@@ -152,7 +149,6 @@ func procesoNumero(tipo int, proceso int) {
 		scanner := bufio.NewScanner(archivo)
 		for scanner.Scan() {
 			linea := scanner.Text()
-			// Intenta convertir la línea a un número si no falla guarda el numero en el arreglo numeros
 			numero, err := strconv.Atoi(linea)
 			if err == nil {
 				numeros = append(numeros, numero)
@@ -170,10 +166,8 @@ func procesoNumero(tipo int, proceso int) {
 
 func procesoLetra(tipo int, proceso int) {
 	if tipo == 1 {
-		// Selecciona una palabra aleatoria de la lista
 		palabraAleatoria := bancoDePalabras[rand.Intn(len(bancoDePalabras))]
 
-		// Abre el archivo en modo de escritura y agrega la palabra
 		file, err := os.OpenFile("paginacion.txt", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
 			fmt.Println("Error al abrir el archivo", err)
@@ -188,7 +182,6 @@ func procesoLetra(tipo int, proceso int) {
 		fmt.Printf("Proceso %d escribiendo letra: %s\n", proceso, palabraAleatoria)
 
 	} else if tipo == 0 {
-		// Leer el archivo y guardar las palabras en un arreglo
 		palabras := []string{}
 		archivo, err := os.Open("paginacion.txt")
 		if err != nil {
@@ -200,13 +193,10 @@ func procesoLetra(tipo int, proceso int) {
 		scanner := bufio.NewScanner(archivo)
 		for scanner.Scan() {
 			linea := scanner.Text()
-			// Verifica si la línea contiene solo letras (palabras)
 			if regexp.MustCompile(`^[a-zA-Z]+$`).MatchString(linea) {
 				palabras = append(palabras, linea)
 			}
 		}
-
-		// Ahora el slice "palabras" contiene las palabras sin incluir los números
 
 		if len(palabras) == 0 {
 			fmt.Printf("Proceso %d leyendo letra: Inexistente\n", proceso)
@@ -218,14 +208,12 @@ func procesoLetra(tipo int, proceso int) {
 }
 
 func abrirNuevaTerminalYEjecutarComando(comando string) error {
-	// Redirige la salida del comando "cat" a un archivo temporal
 	cmd := exec.Command("bash", "-c", comando+" > /tmp/paginacion_output.txt")
 	err := cmd.Run()
 	if err != nil {
 		return err
 	}
 
-	// Abre una nueva terminal para ver la salida del archivo temporal
 	cmd = exec.Command("gnome-terminal", "--", "bash", "-c", "cat /tmp/paginacion_output.txt; read -p 'Presiona Enter para continuar...'")
 
 	return cmd.Run()
@@ -324,8 +312,7 @@ func main() {
 		}
 	}()
 
-	<-quit // Esperar hasta que se reciba una señal de finalización
+	<-quit
 
-	// Borrar el archivo de paginación después del ciclo
 	borrarArchivo()
 }
